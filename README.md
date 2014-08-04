@@ -9,14 +9,14 @@ A JavaScript library allowing to store and manipulate lists of intervals.
 Introduction
 ------------
 
-QIntervals is a library that can store and manipulate lists of intervals. It implements a data structure that can store an array of intervals in normalized form (sorted, non-intersecting, and non-ambiguous) and utility methods that can manipulate it. The library allows to perform a boolean algebra (and, or, xor, and subtraction) and various other operations like testing whether a value or an interval is in lists of intervals or doing basic manipulation like shifting.
+QIntervals is a library that can store and manipulate lists of intervals. It implements a data structure that can store an array of intervals in normalized form (sorted, non-intersecting, and non-ambiguous) and utility methods that can manipulate it. The library allows to perform a boolean algebra (and, or, xor, and subtraction) and various other operations like testing whether a value or an interval is in lists of intervals, and basic manipulation like shifting.
 
 QIntervals has been designed to be friendly for JavaScript engines, especially V8, which powers Node. The list of intervals is stored as an array of numbers giving JS engine a chance to store the whole data in an unboxed continuous array to minimize the memory footprint. Utility functions to convert to/from internal representation are provided.
 
 Documentation
 -------------
 
-QIntervals provides member-function based functionality and static-function based functionality. Member functions can be called on objects created by `qintervals` and static functions are available through `qinterval` itself. The design follows a rule that each member function should have a static function counterpart.
+QIntervals provides member-function based functionality and static-function based functionality. Member functions can be called on objects created by `qintervals` and static functions are available through `qintervals` itself. The design follows a rule that each member function should have a static function counterpart.
 
 ### Creating a list of intervals
 

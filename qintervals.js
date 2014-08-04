@@ -1005,6 +1005,32 @@ qintervals.prototype.equals = function(other) {
 };
 
 /**
+ * qintervals.prototype.isEmpty()
+ *
+ * Get whether the list of intervals is empty.
+ */
+qintervals.prototype.isEmpty = function() {
+  return this.data.length === 0;
+};
+
+/**
+ * qintervals.prototype.getCount()
+ *
+ * Get count of intervals stored.
+ */
+qintervals.prototype.getCount = function() {
+  return this.data.length;
+};
+
+/**
+ * qintervals.prototype.clear()
+ */
+qintervals.prototype.clear = function() {
+  this.data.length = 0;
+  return this;
+};
+
+/**
  * qintervals.test(self, value)
  * qintervals.prototype.test(value)
  *
