@@ -3,7 +3,7 @@ QIntervals
 
 A JavaScript library allowing to store and manipulate lists of intervals.
 
-  * [Official Repository (kobalicek/qintervals)](https://github.com/kobalicek/qintervals)
+  * [Official Repository (jshq/qintervals)](https://github.com/jshq/qintervals)
   * [Unlicense] (http://unlicense.org)
 
 Introduction

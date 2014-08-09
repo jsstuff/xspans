@@ -1,4 +1,4 @@
-// QIntervals <https://github.com/kobalicek/qintervals>
+// QIntervals <https://github.com/jshq/qintervals>
 (function($export, $as) {
 "use strict";
 

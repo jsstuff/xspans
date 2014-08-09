@@ -1,6 +1,6 @@
 {
   "name": "qintervals",
-  "version": "0.1.2",
+  "version": "0.1.4",
 
   "description": "A JavaScript library allowing to store and manipulate lists of intervals.",
   "keywords": [
@@ -19,9 +19,9 @@
     "xor"
   ],
 
-  "homepage": "https://github.com/kobalicek/qintervals",
+  "homepage": "https://github.com/jshq/qintervals",
   "bugs": {
-    "url": "https://github.com/kobalicek/qintervals/issues"
+    "url": "https://github.com/jshq/qintervals/issues"
   },
 
   "contributors": [{
@@ -40,7 +40,7 @@
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/kobalicek/qintervals.git"
+    "url": "https://github.com/jshq/qintervals.git"
   },
 
   "scripts": {

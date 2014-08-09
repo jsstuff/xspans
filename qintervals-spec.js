@@ -1,4 +1,4 @@
-// QIntervals <https://github.com/kobalicek/qintervals>
+// QIntervals <https://github.com/jshq/qintervals>
 "use strict"
 
 var assert = require("assert");
