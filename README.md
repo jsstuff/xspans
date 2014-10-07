@@ -31,25 +31,25 @@ var a = qintervals([
 
 // Create `qintervals` object from a list of objects having from/to.
 var a = qintervals([
-  { from: 0, to: 1},
+  { from: 0, to: 1 },
   { from: 2, to: 3 }
 ]);
 
 // Create `qintervals` object from a list of objects having start/end.
 var a = qintervals([
-  { start: 0, end: 1},
+  { start: 0, end: 1 },
   { start: 2, end: 3 }
 ]);
 
 // Create `qintervals` object from a list of objects having a/b.
 var a = qintervals([
-  { a: 0, b: 1},
+  { a: 0, b: 1 },
   { a: 2, b: 3 }
 ]);
 
 // Create `qintervals` object from a list of objects having custom properties.
 var a = qintervals([
-  { x: 0, y: 1},
+  { x: 0, y: 1 },
   { x: 2, y: 3 }
 ], "x", "y");
 ```
@@ -70,10 +70,10 @@ NOTE: QIntervals is designed in a way that all arguments always accept `qinterva
 If you are done with `qintervals` it's possible to convert the data back to a preferred data format:
 
 ```JS
-qintervals([1, 2, 5, 6]).data;        // [1, 2, 5, 6] (weak).
-qintervals([1, 2, 5, 6]).asPacked();  // [1, 2, 5, 6] (copy).
-qintervals([1, 2, 5, 6]).asArrays();  // [[1, 2], [5, 6]].
-qintervals([1, 2, 5, 6]).asObjects(); // [{ from: 1, to: 2}, { from: 5, to: 6}].
+qintervals([1, 2, 5, 6]).getData();   // [1, 2, 5, 6] (weak).
+qintervals([1, 2, 5, 6]).toPacked();  // [1, 2, 5, 6] (copy).
+qintervals([1, 2, 5, 6]).toArrays();  // [[1, 2], [5, 6]].
+qintervals([1, 2, 5, 6]).toObjects(); // [{ from: 1, to: 2}, { from: 5, to: 6}].
 ```
 
 ### Algebraic Operations

@@ -5,17 +5,21 @@ var assert = require("assert");
 var qintervals = require("./qintervals");
 
 describe("IntervalOps", function() {
+  var kTestNone = qintervals.kTestNone;
+  var kTestFull = qintervals.kTestFull;
+  var kTestPart = qintervals.kTestPart;
+
   it("should wrap packed values if they are well-formed.", function() {
     var packed;
 
     packed = [];
-    assert(qintervals.wrap(packed).data === packed);
+    assert(qintervals.wrap(packed).getData() === packed);
 
     packed = [1, 2];
-    assert(qintervals.wrap(packed).data === packed);
+    assert(qintervals.wrap(packed).getData() === packed);
 
     packed = [1, 2, 4, 5, 10, 19, 20, 24];
-    assert(qintervals.wrap(packed).data === packed);
+    assert(qintervals.wrap(packed).getData() === packed);
   });
 
   it("should sanity ill-formated packed arguments.", function() {
@@ -58,10 +62,6 @@ describe("IntervalOps", function() {
   });
 
   it("should test `test` functionality.", function() {
-    var kTestNone = qintervals.kTestNone;
-    var kTestFull = qintervals.kTestFull;
-    var kTestPart = qintervals.kTestPart;
-
     var a = [0, 1];
     var b = [0, 1, 5, 6, 10, 11];
 
@@ -81,10 +81,29 @@ describe("IntervalOps", function() {
     assert(qintervals.test(a, [-1, 1.0]) === kTestPart);
     assert(qintervals.test(a, [ 1, 1.5]) === kTestNone);
 
-    assert(qintervals.test(b, [0, 1]      ) === kTestPart);
-    assert(qintervals.test(b, [0, 1, 5, 6]) === kTestPart);
+    assert(qintervals.test(b, [0, 1]      ) === kTestFull);
+    assert(qintervals.test(b, [0, 1, 5, 6]) === kTestFull);
     assert(qintervals.test(b, [5, 6, 9,10]) === kTestPart);
     assert(qintervals.test(b, [0, 11]     ) === kTestPart);
+  });
+
+  it("should test `test` functionality with more data.", function() {
+    var a = [];
+    var i;
+
+    for (i = 0; i < 1000; i += 2)
+      a.push(i, i + 1);
+
+    for (i = 0; i < 1000; i += 2)
+      assert(qintervals.test(a, i + 0.5) === kTestFull);
+
+    for (i = 0; i < 1000; i += 2)
+      assert(qintervals.test(a, i + 1.0) === kTestNone);
+
+    for (i = 0; i < 1000; i += 2)
+      assert(qintervals.test(a, i - 0.1) === kTestNone);
+
+    assert(qintervals.test(a, a.slice(2, a.length - 2)) === kTestFull);
   });
 
   it("should test shift functionality.", function() {

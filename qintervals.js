@@ -34,6 +34,13 @@ function qintervals(arg, aKey, bKey) {
 }
 
 /**
+ * qintervals.VERSION
+ *
+ * Version string of `qintervals` library as "major.minor.patch".
+ */
+qintervals.VERSION = "0.2.0";
+
+/**
  * qintervals.kTestNone
  *
  * A testing value of an interval didn't hit the list of intervals.
@@ -344,27 +351,42 @@ function append(a, b, offset) {
 }
 
 /**
- * Find an index that is closest to `b`.
+ * Find an index that is closest to `value`.
  */
 function closestIndex(data, value) {
+  // Should always be 2 or greater.
   var len = data.length;
 
-  var cur = 0;
-  var base = 0;
+  if (value <= data[1])
+    return 0;
 
-  for (var lim = len; lim !== 0; lim >>>= 1) {
-    cur = base + (lim >> 1);
-    if (data[cur] > value)
-      base = cur;
+  if (value >= data[len - 2])
+    return len - 2;
+
+  var base = 0;
+  var i = 0;
+
+  for (var lim = len >>> 1; lim !== 0; lim >>>= 1) {
+    i = base + (lim & ~1);
+
+    var a = data[i];
+    var b = data[i + 1];
+
+    if (b <= value) {
+      base = i + 2;
+      lim--;
+    }
+    else if (a <= value) {
+      return i;
+    }
   }
 
-  return cur & ~1;
+  return i;
 }
 
 /**
  * Get whether interval `data` contains value or interval `value`.
  */
-
 function testOp(a, value) {
   var aLen = a.length;
   var aIndex = 0;
@@ -399,11 +421,14 @@ function testOp(a, value) {
   var bIndex = 0;
 
   // Boundary check.
-  if (b1 <= a[0] || b0 >= a[aLen - 1])
+  if (b1 <= a[0] || b0 >= a[aLen - 1]) {
     return kTestNone;
+  }
 
   // This is very similar to intersection, however, there is no output array.
   var full = 0;
+  b1 = b[1];
+
   for (;;) {
     // Skip leading, non-intersecting intervals.
     var a1 = a[aIndex + 1];
@@ -772,7 +797,7 @@ function subOp(a, b) {
 }
 
 /**
- * Get well-formed data of `input`.
+ * Get well-formed data of `arg`.
  */
 function dataFromArg(arg, aKey, bKey) {
   if (arg instanceof qintervals)
@@ -925,9 +950,19 @@ function staticOp(fn) {
 qintervals.wrap = wrap;
 
 /**
+ * Get a reference to the internal packed data.
+ *
+ * NOTE: You shouldn't not change the data unless you are not gonna use the
+ * `qintervals` object anymore.
+ */
+qintervals.prototype.getData = function() {
+  return this.data;
+};
+
+/**
  * Return a copy of `qintervals` data in a packed format.
  */
-qintervals.prototype.asPacked = function() {
+qintervals.prototype.toPacked = function() {
   var data = this.data;
   return data.slice(0, data.length);
 };
@@ -940,7 +975,7 @@ qintervals.prototype.asPacked = function() {
  * would be converted to:
  *   [[1, 2], [3, 4]]
  */
-qintervals.prototype.asArrays = function() {
+qintervals.prototype.toArrays = function() {
   var output = [];
 
   var data = this.data;
@@ -960,7 +995,7 @@ qintervals.prototype.asArrays = function() {
  * would be converted to:
  *   [{ from: 1, to: 2}, { from: 3, to: 4 }]
  */
-qintervals.prototype.asObjects = function(aKey, bKey) {
+qintervals.prototype.toObjects = function(aKey, bKey) {
   if (!aKey) aKey = "from";
   if (!bKey) bKey = "to";
 
@@ -1042,16 +1077,45 @@ qintervals.prototype.clear = function() {
  *   - `kTestPart` - Partial match.
  */
 qintervals.test = function(a, value) {
-  var data = dataFromArg(a);
+  if (typeof value === "number") {
+    // It's a `qintervals` instance, proceed with `testOp()`.
+    if (a instanceof qintervals)
+      return testOp(a.data, value);
 
-  if (typeof value === "number")
-    return testOp(data, value);
+    if (!isArray(a))
+      throw new TypeError("Expected an array or qintervals, got " + typeof a + ".");
 
-  var b = dataFromArg(value);
-  if (data === b)
-    return data.length ? kTestFull : kTestNone;
-  else
-    return testOp(data, b);
+    var array = a;
+    var i, len = array.length;
+
+    if (!len)
+      return kTestNone;
+
+    // If the value is scalar we don't really need to do any conversion to just
+    // test if it's within all the intervals. Constructing a binary searchable
+    // list takes much longer than just one traversal. This is handled only in
+    // static method as prototype method guarantees binary searchable data.
+    var first = array[0];
+    if (typeof first === "number") {
+      for (i = 0; i < len; i += 2) {
+        if (value >= array[i] && value < array[i + 1])
+          return kTestFull;
+      }
+
+      return kTestNone;
+    }
+
+    return testOp(dataFromArg(a), b);
+  }
+  else {
+    var data = dataFromArg(a);
+    var b = dataFromArg(value);
+
+    if (data === b)
+      return data.length ? kTestFull : kTestNone;
+    else
+      return testOp(data, b);
+  }
 };
 
 qintervals.prototype.test = function(value) {
