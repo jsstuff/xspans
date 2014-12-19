@@ -54,7 +54,7 @@ var a = qintervals([
 ], "x", "y");
 ```
 
-To wrap an existing data into the `qintervals` object, consider using `qintervals.wrap()`:
+To wrap an existing data into the `qintervals` object, consider using `qintervals.fromData()`:
 
 ```JS
 // Create `qintervals` object based on a packed data. The engine will try to
@@ -81,7 +81,7 @@ qintervals([1, 2, 5, 6]).toObjects(); // [{ from: 1, to: 2}, { from: 5, to: 6}].
 QIntervals library implements the following algebraic operations:
 
   * AND - Use `qintervals.and` or `qintervals.intersect`.
-  * OR  - Use `qintervals.or` or `qintervals.union`.
+  * OR  - Use `qintervals.or`  or `qintervals.union`.
   * XOR - Use `qintervals.xor`.
   * SUB - Use `qintervals.sub` or `qintervals.subtract`.
 
