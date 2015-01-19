@@ -9,14 +9,12 @@ var kTestNone = 0;
 var kTestFull = 1;
 var kTestPart = 2;
 
-/**
- * qintervals(arg)
- *
- * Preferred constructor to create a new `qintervals` instance based on `arg`,
- * which can be a list of packed intervals or objects.
- *
- * If no argument is provided an empty instance of `qintervals` is returned.
- */
+// \function `qintervals(arg)`
+//
+// Preferred constructor to create a new `qintervals` instance based on `arg`,
+// which can be a list of packed intervals or objects.
+//
+// If no argument is provided an empty instance of `qintervals` is returned.
 function qintervals(arg, aKey, bKey) {
   var data = null;
 
@@ -33,37 +31,29 @@ function qintervals(arg, aKey, bKey) {
   this.data = data;
 }
 
-/**
- * qintervals.VERSION
- *
- * Version string of `qintervals` library as "major.minor.patch".
- */
+// \def `qintervals.VERSION`
+//
+// Version string of `qintervals` library as "major.minor.patch".
 qintervals.VERSION = "0.2.0";
 
-/**
- * qintervals.kTestNone
- *
- * A testing value of an interval didn't hit the list of intervals.
- */
+// \def `qintervals.kTestNone`
+//
+// A testing value of an interval didn't hit the list of intervals.
 qintervals.kTestNone = kTestNone;
 
-/**
- * qintervals.kTestFull
- *
- * A testing value of an interval fully hits the list of intervals.
- */
+// \def `qintervals.kTestFull`
+//
+// A testing value of an interval fully hits the list of intervals.
 qintervals.kTestFull = kTestFull;
 
-/**
- * qintervals.kTestPart
- *
- * A testing value of an interval partially hits the list of intervals.
- */
+// \def `qintervals.kTestPart`
+//
+// A testing value of an interval partially hits the list of intervals.
 qintervals.kTestPart = kTestPart;
 
-/**
- * Autodetect a property contained in `obj` based on the property `list`.
- */
+// \internal
+//
+// Autodetect a property contained in `obj` based on the property `list`.
 function detectKey(obj, list) {
   for (var i = 0, len = list.length; i < len; i++) {
     var key = list[i];
@@ -74,13 +64,12 @@ function detectKey(obj, list) {
 
   throw new Error("Object doesn't contain known property.");
 }
+var DetectFrom = ["from", "start", "a"];
+var DetectTo   = ["to"  , "end"  , "b"];
 
-var detectFrom = ["from", "start", "a"];
-var detectTo   = ["to"  , "end"  , "b"];
-
-/**
- * Equality check.
- */
+// \internal
+//
+// Equality check.
 function equals(a, b) {
   var aLen = a.length;
   var bLen = b.length;
@@ -96,15 +85,15 @@ function equals(a, b) {
   return true;
 }
 
-/**
- * Get whether `data` is a well-formed list of intervals
- *
- * Well format means:
- *
- *   - Intervals are sorted.
- *   - Intervals don't intersect.
- *   - Intervals are incontinuous, i.e. [1, 3] instead of [1, 2, 2, 3].
- */
+// \internal
+//
+// Get whether `data` is a well-formed list of intervals
+//
+// Well format means:
+//
+//   - Intervals are sorted.
+//   - Intervals don't intersect.
+//   - Intervals are incontinuous, i.e. [1, 3] instead of [1, 2, 2, 3].
 function isWellFormed(data) {
   var len = data.length;
   if (len === 0)
@@ -130,12 +119,12 @@ function isWellFormed(data) {
   return true;
 }
 
-/**
- * Get well-formed data.
- *
- * Returns an array of well-formed data that can be same as `data` passed in
- * case that intervals inside are sorted, don't intersect, and are coalesced.
- */
+// \internal
+//
+// Get well-formed data.
+//
+// Returns an array of well-formed data that can be same as `data` passed in
+// case that intervals inside are sorted, don't intersect, and are coalesced.
 function asWellFormed(data) {
   if (isWellFormed(data))
     return data;
@@ -206,9 +195,9 @@ function asWellFormed(data) {
   return mergeArrays(arrays);
 }
 
-/**
- * Get well-formed data based on data containing interval objects.
- */
+// \internal
+//
+// Get well-formed data based on data containing interval objects.
 function asWellFormedFromObjects(data, aKey, bKey) {
   var len = data.length;
   if (!len)
@@ -222,14 +211,14 @@ function asWellFormedFromObjects(data, aKey, bKey) {
   var arrays = null;
   var output = [];
 
-  if (!aKey) aKey = detectFrom[0];
-  if (!bKey) bKey = detectTo[0];
+  if (!aKey) aKey = DetectFrom[0];
+  if (!bKey) bKey = DetectTo[0];
 
   for (var i = 0; i < len; i++) {
     var obj = data[i];
 
-    if (!hasOwnProperty.call(obj, aKey)) aKey = detectKey(obj, detectFrom);
-    if (!hasOwnProperty.call(obj, bKey)) bKey = detectKey(obj, detectTo);
+    if (!hasOwnProperty.call(obj, aKey)) aKey = detectKey(obj, DetectFrom);
+    if (!hasOwnProperty.call(obj, bKey)) bKey = detectKey(obj, DetectTo);
 
     a = obj[aKey];
     b = obj[bKey];
@@ -285,22 +274,22 @@ function asWellFormedFromObjects(data, aKey, bKey) {
   return mergeArrays(arrays);
 }
 
-/**
- * Return `qintervals` object reusing an array of packed intervals.
- *
- * NOTE: This is a low-level function that just wraps a given `array` to be used
- * by `qintervals` object, it doesn't copy the values if they are well format
- * (sorted, coalesced, and non-intersecting).
- */
+// \function `qintervals.wrap(data)`
+//
+// Return `qintervals` object reusing/wrapping an existing array of packed intervals.
+//
+// NOTE: This is a low-level function that just wraps a given `array` to be used
+// by `qintervals` object, it doesn't copy the values if they are well format
+// (sorted, coalesced, and non-intersecting).
 function wrap(data) {
   return new qintervals(asWellFormed(data));
 }
+qintervals.wrap = wrap;
 
-/**
- * Incrementally merge (union operation) multiple arrays passed in `arrays`.
- *
- * Returns a single array containing all intervals merged and coalesced.
- */
+// \internal
+//
+// Incrementally merge (union operation) multiple arrays passed in `arrays`.
+// Returns a single array containing all intervals merged and coalesced.
 function mergeArrays(arrays) {
   var len = arrays.length;
 
@@ -338,9 +327,9 @@ function mergeArrays(arrays) {
   return a;
 }
 
-/**
- * Append `b` to `a` starting at `offset`.
- */
+// \internal
+//
+// Append `b` to `a` starting at `offset`.
 function append(a, b, offset) {
   var i = offset || 0;
   var len = b.length;
@@ -350,9 +339,9 @@ function append(a, b, offset) {
   return a;
 }
 
-/**
- * Find an index that is closest to `value`.
- */
+// \internal
+//
+// Find an index that is closest to `value`.
 function closestIndex(data, value) {
   // Should always be 2 or greater.
   var len = data.length;
@@ -384,9 +373,9 @@ function closestIndex(data, value) {
   return i;
 }
 
-/**
- * Get whether interval `data` contains value or interval `value`.
- */
+// \internal
+//
+// Get whether interval `data` contains value or interval `value`.
 function testOp(a, value) {
   var aLen = a.length;
   var aIndex = 0;
@@ -458,9 +447,9 @@ function testOp(a, value) {
   }
 }
 
-/**
- * Return a new array that contains `a` shifted by a scalar value `b`.
- */
+// \internal
+//
+// Return a new array that contains `a` shifted by a scalar value `b`.
 function shiftOp(data, value) {
   var output = [];
 
@@ -487,9 +476,9 @@ function shiftOp(data, value) {
   return output;
 }
 
-/**
- * Return a new array that contains `a` OR `b`.
- */
+// \internal
+//
+// Return a new array that contains `a` OR `b`.
 function orOp(a, b) {
   var output = [];
 
@@ -545,9 +534,9 @@ function orOp(a, b) {
   return output;
 }
 
-/**
- * Return a new array that contains `a` AND `b`.
- */
+// \internal
+//
+// Return a new array that contains `a` AND `b`.
 function andOp(a, b) {
   var output = [];
 
@@ -616,9 +605,9 @@ function andOp(a, b) {
   }
 }
 
-/**
- * Return a new array that contains `a` XOR `b`.
- */
+// \internal
+//
+// Return a new array that contains `a` XOR `b`.
 function xorOp(a, b) {
   var output = [];
 
@@ -715,9 +704,9 @@ function xorOp(a, b) {
   return output;
 }
 
-/**
- * Return a new array that contains `a` SUB `b`.
- */
+// \internal
+//
+// Return a new array that contains `a` SUB `b`.
 function subOp(a, b) {
   var output = [];
 
@@ -796,9 +785,9 @@ function subOp(a, b) {
   }
 }
 
-/**
- * Get well-formed data of `arg`.
- */
+// \internal
+//
+// Get well-formed data of `arg`.
 function dataFromArg(arg, aKey, bKey) {
   if (arg instanceof qintervals)
     return arg.data;
@@ -822,9 +811,9 @@ function dataFromArg(arg, aKey, bKey) {
   throw new TypeError("Expected an array of numbers or objects, got " + typeof first + ".");
 }
 
-/**
- * Special case, which results in merging two lists of intervals.
- */
+// \internal
+//
+// Special case, which results in merging two lists of intervals.
 function mergeOp(a, b) {
   var aLen = a.length;
   var bLen = b.length;
@@ -883,23 +872,23 @@ function mergeOp(a, b) {
   return a;
 }
 
-/**
- * Special case, which results in clearing two lists of intervals.
- */
+// \internal
+//
+// Special case, which results in clearing two lists of intervals.
 function clearOp(a, b) {
   return (a.length === 0) ? a : [];
 }
 
-/**
- * Special case, which results in keeping the original list of intervals as is.
- */
+// \internal
+//
+// Special case, which results in keeping the original list of intervals as is.
 function noOp(a, b) {
   return a;
 }
 
-/**
- * Member operation (builder).
- */
+// \internal
+//
+// Member operation (builder).
 function memberOp(regularFn, specialFn) {
   return function() {
     var a = this.data;
@@ -924,9 +913,9 @@ function memberOp(regularFn, specialFn) {
   };
 }
 
-/**
- * Static operation (builder).
- */
+// \internal
+//
+// Static operation (builder).
 function staticOp(fn) {
   return function() {
     var iLen = arguments.length;
@@ -940,41 +929,26 @@ function staticOp(fn) {
   };
 }
 
-/**
- * qintervals.wrap(data)
- *
- * Create a new `qintervals` object wrapping an existing array of packed values.
- *
- * NOTE: If data is well-formed no copy will be created.
- */
-qintervals.wrap = wrap;
-
-/**
- * Get a reference to the internal packed data.
- *
- * NOTE: You shouldn't not change the data unless you are not gonna use the
- * `qintervals` object anymore.
- */
+// Get a reference to the internal packed data.
+//
+// NOTE: You shouldn't not change the data unless you are not gonna use the
+// `qintervals` object anymore.
 qintervals.prototype.getData = function() {
   return this.data;
 };
 
-/**
- * Return a copy of `qintervals` data in a packed format.
- */
+// Return a copy of `qintervals` data in a packed format.
 qintervals.prototype.toPacked = function() {
   var data = this.data;
   return data.slice(0, data.length);
 };
 
-/**
- * Convert a `qintervals` object into an array of arrays:
- *
- * For example an interval:
- *   [1, 2, 3, 4]
- * would be converted to:
- *   [[1, 2], [3, 4]]
- */
+// Convert a `qintervals` object into an array of arrays:
+//
+// For example an interval:
+//   [1, 2, 3, 4]
+// would be converted to:
+//   [[1, 2], [3, 4]]
 qintervals.prototype.toArrays = function() {
   var output = [];
 
@@ -987,14 +961,12 @@ qintervals.prototype.toArrays = function() {
   return output;
 };
 
-/**
- * Convert a `qintervals` object into an array of objects:
- *
- * For example an interval:
- *   [1, 2, 3, 4]
- * would be converted to:
- *   [{ from: 1, to: 2}, { from: 3, to: 4 }]
- */
+// Convert a `qintervals` object into an array of objects:
+//
+// For example an interval:
+//   [1, 2, 3, 4]
+// would be converted to:
+//   [{ from: 1, to: 2}, { from: 3, to: 4 }]
 qintervals.prototype.toObjects = function(aKey, bKey) {
   if (!aKey) aKey = "from";
   if (!bKey) bKey = "to";
@@ -1014,21 +986,17 @@ qintervals.prototype.toObjects = function(aKey, bKey) {
   return output;
 };
 
-/**
- * qintervals.prototype.toString()
- *
- * Return interval as a string.
- */
+// \function `qintervals.prototype.toString()`
+//
+// Return interval as a string.
 qintervals.prototype.toString = function() {
   return this.data.toString();
 };
 
-/**
- * qintervals.equals(a, b)
- * qintervals.prototype.equals(other)
- *
- * Get whether two interval lists are equal.
- */
+// \function `qintervals.equals(a, b)`
+// \function `qintervals.prototype.equals(other)`
+//
+// Get whether two interval lists are equal.
 qintervals.equals = function(a, b) {
   return equals(dataFromArg(a), dataFromArg(b));
 };
@@ -1039,43 +1007,35 @@ qintervals.prototype.equals = function(other) {
   return equals(this.data, dataFromArg(other));
 };
 
-/**
- * qintervals.prototype.isEmpty()
- *
- * Get whether the list of intervals is empty.
- */
+// \function `qintervals.prototype.isEmpty()`
+//
+// Get whether the list of intervals is empty.
 qintervals.prototype.isEmpty = function() {
   return this.data.length === 0;
 };
 
-/**
- * qintervals.prototype.getCount()
- *
- * Get count of intervals stored.
- */
+// \function `qintervals.prototype.getCount()`
+//
+// Get count of intervals stored.
 qintervals.prototype.getCount = function() {
   return this.data.length;
 };
 
-/**
- * qintervals.prototype.clear()
- */
+// \function `qintervals.prototype.clear()`
 qintervals.prototype.clear = function() {
   this.data.length = 0;
   return this;
 };
 
-/**
- * qintervals.test(self, value)
- * qintervals.prototype.test(value)
- *
- * Test whether the list of intervals contains a scalar value or another list.
- *
- * The function can return the following values:
- *   - `kTestNone` - No match.
- *   - `kTestFull` - Full match.
- *   - `kTestPart` - Partial match.
- */
+// \function `qintervals.test(self, value)`
+// \function `qintervals.prototype.test(value)`
+//
+// Test whether the list of intervals contains a scalar value or another list.
+//
+// The function can return the following values:
+//   - `kTestNone` - No match.
+//   - `kTestFull` - Full match.
+//   - `kTestPart` - Partial match.
 qintervals.test = function(a, value) {
   if (typeof value === "number") {
     // It's a `qintervals` instance, proceed with `testOp()`.
@@ -1131,16 +1091,14 @@ qintervals.prototype.test = function(value) {
     return testOp(a, b);
 };
 
-/**
- * qintervals.shift(a, value)
- * qintervals.prototype.shift(value)
- *
- * Shift a list of intervals `a` by a scalar `value`, returning a new `qintervals`.
- *
- * NOTE: If you store intervals as floating point numbers shifting can cause
- * the number of intervals to decrease if rounding caused one or more interval
- * to became continuous.
- */
+// \function `qintervals.shift(a, value)`
+// \function `qintervals.prototype.shift(value)`
+//
+// Shift a list of intervals `a` by a scalar `value`, returning a new `qintervals`.
+//
+// NOTE: If you store intervals as floating point numbers shifting can cause
+// the number of intervals to decrease if rounding caused one or more interval
+// to became continuous.
 qintervals.shift = function(a, value) {
   return new qintervals(shiftOp(dataFromArg(a), value));
 };
@@ -1182,66 +1140,66 @@ qintervals.prototype.shift = function(value) {
   return this;
 };
 
-/**
- * qintervals.union(...)
- * qintervals.or(...)
- *
- * Union two or more lists of intervals, returninig a new `qintervals`.
- *
- * qintervals.prototype.or(...)
- * qintervals.prototype.union(...)
- *
- * Union with one or more interval lists in-place.
- */
-qintervals.prototype.or = memberOp(orOp, mergeOp);
+// \function `qintervals.union(...)`
+// \function `qintervals.or(...)`
+//
+// Union two or more lists of intervals, returninig a new `qintervals`.
+qintervals.union =
+  qintervals.or =
+    staticOp(orOp);
 
-qintervals.union = qintervals.or = staticOp(orOp);
-qintervals.prototype.union = qintervals.prototype.or;
+// \function `qintervals.prototype.union(...)`
+// \function `qintervals.prototype.or(...)`
+//
+// Union with one or more interval lists in-place.
+qintervals.prototype.union =
+  qintervals.prototype.or =
+    memberOp(orOp, mergeOp);
 
-/**
- * qintervals.intersect(...)
- * qintervals.and(...)
- *
- * Intersect two or more lists of intervals, returninig a new `qintervals`.
- *
- * qintervals.prototype.and(...)
- * qintervals.prototype.intersect(...)
- *
- * Intersect with one or more interval lists in-place.
- */
-qintervals.prototype.and = memberOp(andOp, clearOp);
+// \function `qintervals.intersect(...)`
+// \function `qintervals.and(...)`
+//
+// Intersect two or more lists of intervals, returninig a new `qintervals`.
+qintervals.intersect =
+  qintervals.and =
+    staticOp(andOp);
 
-qintervals.intersect = qintervals.and = staticOp(andOp);
-qintervals.prototype.intersect = qintervals.prototype.and;
+// \function `qintervals.prototype.intersect(...)`
+// \function `qintervals.prototype.and(...)`
+//
+// Intersect with one or more interval lists in-place.
+qintervals.prototype.intersect =
+  qintervals.prototype.and =
+    memberOp(andOp, clearOp);
 
-/**
- * qintervals.xor(...)
- *
- * Xor two or more lists of intervals, returninig a new `qintervals`.
- *
- * qintervals.prototype.xor(...)
- *
- * Xor with one or more interval lists in-place.
- */
-qintervals.prototype.xor = memberOp(xorOp, mergeOp);
+// \function `qintervals.xor(...)`
+//
+// Xor two or more lists of intervals, returninig a new `qintervals`.
+qintervals.xor =
+  staticOp(xorOp);
 
-qintervals.xor = staticOp(xorOp);
+// \function `qintervals.prototype.xor(...)`
+//
+// Xor with one or more interval lists in-place.
+qintervals.prototype.xor =
+  memberOp(xorOp, mergeOp);
 
-/**
- * qintervals.subtract(...)
- * qintervals.sub(...)
- *
- * Subtract two or more lists of intervals, returninig a new `qintervals`.
- *
- * qintervals.prototype.subtract(...)
- * qintervals.prototype.sub(...)
- *
- * Subtract with one or more interval lists in-place.
- */
-qintervals.prototype.sub = memberOp(subOp, noOp);
+// \function `qintervals.subtract(...)`
+// \function `qintervals.sub(...)`
+//
+// Subtract two or more lists of intervals, returninig a new `qintervals`.
 
-qintervals.subtract = qintervals.sub = staticOp(subOp);
-qintervals.prototype.subtract = qintervals.prototype.sub;
+qintervals.subtract =
+  qintervals.sub =
+    staticOp(subOp);
+
+// \function `qintervals.prototype.subtract(...)`
+// \function `qintervals.prototype.sub(...)`
+//
+// Subtract with one or more interval lists in-place.
+qintervals.prototype.subtract =
+  qintervals.prototype.sub =
+    memberOp(subOp, noOp);
 
 $export[$as] = qintervals;
 
