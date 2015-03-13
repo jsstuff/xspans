@@ -103,7 +103,7 @@ function equals(a, b) {
 //
 // Get whether `data` is a well-formed list of intervals
 //
-// Well format means:
+// Well-formed means:
 //
 //   - Intervals are sorted.
 //   - Intervals don't intersect.
@@ -293,7 +293,7 @@ function asWellFormedFromObjects(data, aKey, bKey) {
 // Return `qintervals` object reusing/wrapping an existing array of packed intervals.
 //
 // NOTE: This is a low-level function that just wraps a given `array` to be used
-// by `qintervals` object, it doesn't copy the values if they are well format
+// by `qintervals` object, it doesn't copy the values if they are well-formed
 // (sorted, coalesced, and non-intersecting).
 function wrap(data) {
   return new qintervals(asWellFormed(data));
@@ -850,6 +850,7 @@ function mergeOp(a, b) {
   }
 
   var b0 = b[0];
+  var b1 = b[bLen - 1];
   var a1 = a[aLen - 1];
 
   // Append.
@@ -868,10 +869,8 @@ function mergeOp(a, b) {
     return a;
   }
 
-  var a0 = a[0];
-  var b1 = b[bLen - 1];
-
   // Prepend.
+  var a0 = a[0];
   if (a0 >= b1) {
     // Merge last `b` interval with first `a` interval.
     i = bLen - 2;

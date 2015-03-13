@@ -1,6 +1,6 @@
 {
   "name": "qintervals",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "license": "Unlicense",
 
   "description": "A JavaScript library allowing to store and manipulate lists of intervals.",

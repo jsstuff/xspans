@@ -119,7 +119,7 @@ describe("IntervalOps", function() {
     assert(qintervals.shift(b,-1).equals([-1, 0,  9,  999]));
   });
 
-  it("should test union functionality.", function() {
+  it("should test union functionality #1.", function() {
     var a = [0, 1, 10, 11, 20, 21];
     var b = [1, 2, 11, 12, 21, 22];
     var c = [2, 3, 12, 13, 22, 23];
@@ -145,7 +145,17 @@ describe("IntervalOps", function() {
     assert(qintervals.union(f, e).equals(f));
   });
 
-  it("should test intersect functionality.", function() {
+  it("should test union functionality #2.", function() {
+    var a = qintervals();
+
+    a.union([0, 1]);
+    assert(a.equals([0, 1]));
+
+    a.union([1, 2]);
+    assert(a.equals([0, 2]));
+  });
+
+  it("should test intersect functionality #1.", function() {
     var a = [0, 2, 10, 12, 20, 22];
     var b = [1, 3, 11, 13, 21, 23];
     var c = [2, 4, 12, 14, 22, 24];
@@ -170,6 +180,13 @@ describe("IntervalOps", function() {
 
     assert(qintervals.intersect(e, f).equals(e));
     assert(qintervals.intersect(f, e).equals(e));
+  });
+
+  it("should test intersect functionality #2.", function() {
+    var a = qintervals([0, 9]);
+
+    a.intersect([0, 1, 5, 9]);
+    assert(a.equals([0, 1, 5, 9]));
   });
 
   it("should test xor functionality.", function() {
