@@ -22,7 +22,7 @@ QIntervals provides member-function based functionality and static-function base
 
 To create an interval representation of a list of intervals use `qintervals()` or `qintervals.wrap()` functions.
 
-```JS
+```js
 // Create `qintervals` object from a list of packed intervals.
 var a = qintervals([
   0, 1,
@@ -56,7 +56,7 @@ var a = qintervals([
 
 To wrap an existing data into the `qintervals` object, consider using `qintervals.fromData()`:
 
-```JS
+```js
 // Create `qintervals` object based on a packed data. The engine will try to
 // reuse the array if it's well-formed. This can be dangerous in cases that
 // the input is modified while still being used by `qintervals` object.
@@ -69,7 +69,7 @@ NOTE: QIntervals is designed in a way that all arguments always accept `qinterva
 
 If you are done with `qintervals` it's possible to convert the data back to a preferred data format:
 
-```JS
+```js
 qintervals([1, 2, 5, 6]).getData();   // [1, 2, 5, 6] (weak).
 qintervals([1, 2, 5, 6]).toPacked();  // [1, 2, 5, 6] (copy).
 qintervals([1, 2, 5, 6]).toArrays();  // [[1, 2], [5, 6]].
@@ -87,7 +87,7 @@ QIntervals library implements the following algebraic operations:
 
 Examples:
 
-```JS
+```js
 // Union (OR) two intervals.
 var a = qintervals.or([1, 2], [5, 6]);  // [1, 2, 5, 6].
 var a = qintervals([1, 2]).or([5, 6]);  // [1, 2, 5, 6].
@@ -107,7 +107,7 @@ var a = qintervals([1, 6]).sub([4, 8]); // [1, 4].
 
 The number of intervals in a list is not limited:
 
-```JS
+```js
 var a = qintervals([1, 2, 10, 100, 1000, 5000]);
 var b = qintervals([5, 6, 15, 200, 4000, 9999]);
 
@@ -121,7 +121,7 @@ qintervals.sub(a, b); // [1, 2, 10, 15, 1000, 4000].
 
 Shifting allows to shift a list of intervals by a scalar value:
 
-```JS
+```js
 var a = qintervals([1, 2, 5, 6, 11, 12]);
 
 a.shift(-5); // [-4, -3,  0,  1,  6,  7].
@@ -136,7 +136,7 @@ Testing enables to check whether a scalar value, an interval, or a list of inter
   * `qintervals.kTestFull` - Full match - the tested value, interval, or list of intervals are fully contained in `qintervals` object. 
   * `qintervals.kTestPart` - Partial match - part of an interval or list of intervals are contained in `qintervals` object. 
 
-```JS
+```js
 var a = qintervals([1, 5, 10, 20, 50, 99]);
 var b = qintervals([8, 20, 80, 100]);
 
