@@ -1,4 +1,4 @@
-// QIntervals <https://github.com/jshq/qintervals>
+// qintervals <https://github.com/exjs/qintervals>
 "use strict"
 
 var assert = require("assert");
@@ -22,7 +22,7 @@ describe("IntervalOps", function() {
     assert(qintervals.wrap(packed).getData() === packed);
   });
 
-  it("should sanity ill-formated packed arguments.", function() {
+  it("should sanity ill-formed packed arguments.", function() {
     assert(qintervals.equals([1, 2, 2, 3], [1, 3]));
     assert(qintervals.equals([2, 3, 1, 2], [1, 3]));
     assert(qintervals.equals([3, 4, 1, 2], [1, 2, 3, 4]));
@@ -229,5 +229,14 @@ describe("IntervalOps", function() {
 
     assert(qintervals.sub(d, e).equals([0, 2, 8, 10]));
     assert(qintervals.sub(e, d).equals([4, 6, 12, 14]));
+
+    var f = [2, 3, 5, 6, 8, 11];
+    var g = [2, 11, 12, 13];
+
+    assert(qintervals.sub(f, g).equals([]));
+    assert(qintervals.sub(g, f).equals([3, 5, 6, 8, 12, 13]));
+
+    assert(qintervals.sub(a, f).equals([0, 1, 4, 5, 6, 7]));
+    assert(qintervals.sub(b, f).equals([1, 2, 3, 4, 7, 8]));
   });
 });

@@ -1,32 +1,46 @@
-// QIntervals <https://github.com/jshq/qintervals>
+// qintervals <https://github.com/exjs/qintervals>
 (function($export, $as) {
 "use strict";
 
-var isArray = Array.isArray;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
+const isArray = Array.isArray;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
-var kTestNone = 0;
-var kTestFull = 1;
-var kTestPart = 2;
+const kTestNone = 0;
+const kTestFull = 1;
+const kTestPart = 2;
 
-// \function `qintervals(arg)`
-//
-// Preferred constructor to create a new `qintervals` instance based on `arg`,
-// which can be a list of packed intervals or objects.
-//
-// If no argument is provided an empty instance of `qintervals` is returned.
-function qintervals(arg, aKey, bKey) {
+function throwTypeError(msg) {
+  throw new TypeError(msg);
+}
+
+/**
+ * Preferred constructor to create a new `qintervals` instance based on `src`,
+ * which can be `qintervals` instance, list of packed intervals, or list of
+ * objects.
+ *
+ * If no argument is provided an empty instance of `qintervals` is returned.
+ *
+ * @param src Intervals data.
+ * @param aKey In case that the `data` is a list of objects, `aKey` can be used
+ *   to specify which key represents the beginning of the interval.
+ * @param bKey In case that the `data` is a list of objects, `bKey` can be used
+ *   to specify which key represents the end of the interval.
+ * @return {qintervals}
+ *
+ * @class
+ */
+function qintervals(src, aKey, bKey) {
   var data = null;
 
   if (!(this instanceof qintervals))
-    return new qintervals(arg, aKey, bKey);
+    return new qintervals(src, aKey, bKey);
 
-  if (!arg)
+  if (!src)
     data = [];
-  else if (arg instanceof qintervals)
-    data = arg.data.slice(0, arg.data.length);
+  else if (src instanceof qintervals)
+    data = src.data.slice(0, src.data.length);
   else
-    data = dataFromArg(arg, aKey, bKey);
+    data = dataFromArg(src, aKey, bKey);
 
   this.data = data;
 }
@@ -34,7 +48,7 @@ function qintervals(arg, aKey, bKey) {
 // \def `qintervals.VERSION`
 //
 // Version string of `qintervals` library as "major.minor.patch".
-qintervals.VERSION = "0.2.0";
+qintervals.VERSION = "0.2.1";
 
 // \def `qintervals.kTestNone`
 //
@@ -56,31 +70,31 @@ qintervals.kTestPart = kTestPart;
 // Autodetect a property contained in `obj` based on the property `list`.
 function detectKey(obj, list) {
   for (var i = 0, len = list.length; i < len; i++) {
-    var key = list[i];
+    const key = list[i];
 
     if (hasOwnProperty.call(obj, key))
       return key;
   }
 
-  throw new Error("Object doesn't contain known property.");
+  throwTypeError("Object doesn't contain a property pair that can form a valid interval");
 }
-var DetectFrom = ["from", "start", "a"];
-var DetectTo   = ["to"  , "end"  , "b"];
+
+const DetectFrom = ["from", "start", "a"];
+const DetectTo   = ["to"  , "end"  , "b"];
 
 // \internal
 //
 // Equality check.
 function equals(a, b) {
-  var aLen = a.length;
-  var bLen = b.length;
+  const aLen = a.length;
+  const bLen = b.length;
 
   if (aLen !== bLen)
     return false;
 
-  for (var i = 0; i < aLen; i++) {
+  for (var i = 0; i < aLen; i++)
     if (a[i] !== b[i])
       return false;
-  }
 
   return true;
 }
@@ -95,7 +109,7 @@ function equals(a, b) {
 //   - Intervals don't intersect.
 //   - Intervals are incontinuous, i.e. [1, 3] instead of [1, 2, 2, 3].
 function isWellFormed(data) {
-  var len = data.length;
+  const len = data.length;
   if (len === 0)
     return true;
 
@@ -104,8 +118,8 @@ function isWellFormed(data) {
     return false;
 
   for (var i = 2; i < len; i += 2) {
-    var x = data[i];
-    var y = data[i + 1];
+    const x = data[i];
+    const y = data[i + 1];
 
     if (typeof x !== "number" || typeof y !== "number")
       return false;
@@ -144,8 +158,8 @@ function asWellFormed(data) {
     a = data[i];
     b = data[i + 1];
 
-    if (typeof a !== "number") throw new TypeError("Expected Number, got " + typeof a + ".");
-    if (typeof b !== "number") throw new TypeError("Expected Number, got " + typeof b + ".");
+    if (typeof a !== "number") throwTypeError("Expected Number, got " + typeof a);
+    if (typeof b !== "number") throwTypeError("Expected Number, got " + typeof b);
 
     if (a >= b) {
       if (a === b)
@@ -223,8 +237,8 @@ function asWellFormedFromObjects(data, aKey, bKey) {
     a = obj[aKey];
     b = obj[bKey];
 
-    if (typeof a !== "number") throw new TypeError("Expected Number, got " + typeof a + ".");
-    if (typeof b !== "number") throw new TypeError("Expected Number, got " + typeof b + ".");
+    if (typeof a !== "number") throwTypeError("Expected Number, got " + typeof a);
+    if (typeof b !== "number") throwTypeError("Expected Number, got " + typeof b);
 
     if (a >= b) {
       if (a === b)
@@ -395,7 +409,7 @@ function testOp(a, value) {
 
   // Test interval or list of intervals.
   if (!isArray(value))
-    throw new TypeError("Expected an array or qintervals, got " + typeof value + ".");
+    throwTypeError("Expected an array or qintervals, got " + typeof value);
 
   var b = value;
   var bLen = b.length;
@@ -630,8 +644,12 @@ function xorOp(a, b) {
   var b1 = b[bIndex + 1];
 
   var pos = Math.min(a0, b0);
+
+  // Hint for VM, initial values are never used.
+  var x = 0;
+  var y = 0;
+
   for (;;) {
-    var x, y;
     if (a1 <= b0) {
       x   = Math.max(a0, pos);
       y   = a1;
@@ -700,8 +718,6 @@ function xorOp(a, b) {
 
     pos = Math.max(pos, Math.min(a0, b0));
   }
-
-  return output;
 }
 
 // \internal
@@ -731,8 +747,11 @@ function subOp(a, b) {
   var pos = a0;
   var sub = b0;
 
+  // Hint for VM, initial values are never used.
+  var x = 0;
+  var y = 0;
+
   for (;;) {
-    var x, y;
     var merge = true;
 
     if (a1 <= sub) {
@@ -753,7 +772,7 @@ function subOp(a, b) {
     if (merge)
       output.push(x, y);
 
-    if (a1 <= pos) {
+    while (a1 <= pos) {
       if ((aIndex += 2) >= aLen)
         return output;
 
@@ -787,15 +806,15 @@ function subOp(a, b) {
 
 // \internal
 //
-// Get well-formed data of `arg`.
-function dataFromArg(arg, aKey, bKey) {
-  if (arg instanceof qintervals)
-    return arg.data;
+// Get well-formed data of `src`.
+function dataFromArg(src, aKey, bKey) {
+  if (src instanceof qintervals)
+    return src.data;
 
-  if (!isArray(arg))
-    throw new TypeError("Expected an array or qintervals, got " + typeof arg + ".");
+  if (!isArray(src))
+    throwTypeError("Expected an array or qintervals, got " + typeof src);
 
-  var array = arg;
+  var array = src;
   var len = array.length;
 
   if (!len)
@@ -808,7 +827,7 @@ function dataFromArg(arg, aKey, bKey) {
   if (typeof first === "object")
     return asWellFormedFromObjects(array, aKey, bKey);
 
-  throw new TypeError("Expected an array of numbers or objects, got " + typeof first + ".");
+  throwTypeError("Expected an array of numbers or objects, got " + typeof first);
 }
 
 // \internal
@@ -1043,7 +1062,7 @@ qintervals.test = function(a, value) {
       return testOp(a.data, value);
 
     if (!isArray(a))
-      throw new TypeError("Expected an array or qintervals, got " + typeof a + ".");
+      throwTypeError("Expected an array or qintervals, got " + typeof a);
 
     var array = a;
     var i, len = array.length;
