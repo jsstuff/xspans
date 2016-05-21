@@ -48,7 +48,7 @@ function qintervals(src, aKey, bKey) {
 // \def `qintervals.VERSION`
 //
 // Version string of `qintervals` library as "major.minor.patch".
-qintervals.VERSION = "0.2.1";
+qintervals.VERSION = "0.2.3";
 
 // \def `qintervals.kTestNone`
 //
