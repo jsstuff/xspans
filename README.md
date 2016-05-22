@@ -4,7 +4,8 @@ xspans
 A container that allows to store and manipulate arrays of spans (or intervals).
 
   * [Official Repository (exjs/xspans)](https://github.com/exjs/xspans)
-  * [Unlicense] (http://unlicense.org)
+  * [Official Chat (gitter)](https://gitter.im/exjs/exjs)
+  * [Public Domain (https://unlicense.org)](https://unlicense.org)
 
 Introduction
 ------------
