@@ -309,8 +309,8 @@ function asWellFormedFromArrays(src) {
  * Converts an input array of objects `src` into a well-formed span-array.
  *
  * @param {object[]} src Source array.
- * @param {string=} aKey Lower bound property name.
- * @param {string=} aKey Upper bound property name.
+ * @param {string} [aKey] Lower bound property name.
+ * @param {string} [bKey] Upper bound property name.
  * @return {array} Well-formed span-array.
  *
  * @private
@@ -1179,8 +1179,8 @@ xspans.prototype.toArrays = function() {
  * would be converted to:
  *   `[{ from: 1, to: 2}, { from: 3, to: 4 }]`
  *
- * @param {string=} aKey Optional lower bound property name (default `"from"`).
- * @param {string=} aKey Optional upper bound property name (default `"to"`).
+ * @param {string} [aKey] Optional lower bound property name (default `"from"`).
+ * @param {string} [bKey] Optional upper bound property name (default `"to"`).
  * @return {object[]} Array of objects, where each object represents a single
  *   span.
  */
