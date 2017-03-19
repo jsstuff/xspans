@@ -235,7 +235,7 @@ function asWellFormed(src) {
  * @private
  */
 function asWellFormedFromArrays(src) {
-  const output = [];
+  let output = [];
   const len = src.length;
 
   if (!len)
