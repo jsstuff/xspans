@@ -591,7 +591,7 @@ function testOp(a, value) {
  * private
  */
 function shiftOp(data, offset) {
-  const output = [];
+  var output = [];
   const len = data.length;
 
   var last = -Number.MAX_VALUE;
@@ -620,7 +620,7 @@ function scaleOp(data, scale) {
   if (scale < 0)
     throwTypeError("Invalid scale: " + scale);
 
-  const output = [];
+  var output = [];
   const len = data.length;
 
   var last = -Number.MAX_VALUE;
@@ -648,7 +648,7 @@ function scaleOp(data, scale) {
  * @private
  */
 function orOp(a, b) {
-  const output = [];
+  var output = [];
 
   if (a === b)
     return append(output, a);
@@ -708,7 +708,7 @@ function orOp(a, b) {
  * @private
  */
 function andOp(a, b) {
-  const output = [];
+  var output = [];
 
   const aLen = a.length;
   const bLen = b.length;
@@ -781,7 +781,7 @@ function andOp(a, b) {
  * @private
  */
 function xorOp(a, b) {
-  const output = [];
+  var output = [];
 
   if (a === b)
     return output;
@@ -885,7 +885,7 @@ function xorOp(a, b) {
  * @private
  */
 function subOp(a, b) {
-  const output = [];
+  var output = [];
 
   const aLen = a.length;
   const bLen = b.length;
@@ -1160,7 +1160,7 @@ xspans.prototype.toPacked = function() {
  * @return {number[][2]}
  */
 xspans.prototype.toArrays = function() {
-  const output = [];
+  var output = [];
 
   const data = this.data;
   const len = data.length;
@@ -1188,7 +1188,7 @@ xspans.prototype.toObjects = function(aKey, bKey) {
   if (!aKey) aKey = "from";
   if (!bKey) bKey = "to";
 
-  const output = [];
+  var output = [];
 
   const data = this.data;
   const len = data.length;
