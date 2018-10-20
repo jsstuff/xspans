@@ -1,4 +1,4 @@
-// xspans.js <https://github.com/exjs/xspans>
+// xspans.js <https://github.com/jsstuff/xspans>
 (function($export, $as) {
 "use strict";
 
