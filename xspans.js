@@ -47,7 +47,7 @@ function xspans(src, aKey, bKey) {
  *
  * @alias xspans.VERSION
  */
-xspans.VERSION = "1.0.0";
+xspans.VERSION = "1.0.1";
 
 /**
  * A testing value or an array instance didn't hit the `xspans`.
